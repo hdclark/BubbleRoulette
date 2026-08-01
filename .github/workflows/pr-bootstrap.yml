@@ -17,17 +17,18 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
-      - name: Apply Compose compatibility fix
+      - name: Apply compatibility fixes
         shell: bash
         run: |
           sed -i '/import androidx.compose.foundation.lazy.grid.animateItem/d' app/src/main/java/com/hdclark/bubbleroulette/MainActivity.kt
           sed -i 's/modifier = Modifier.animateItem(),/modifier = Modifier,/' app/src/main/java/com/hdclark/bubbleroulette/MainActivity.kt
+          sed -i '/android:windowLightNavigationBar/d' app/src/main/res/values/themes.xml
           rm -f .ci-trigger
           if ! git diff --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add app/src/main/java/com/hdclark/bubbleroulette/MainActivity.kt .ci-trigger
-            git commit -m "Fix Compose grid compatibility"
+            git add app/src/main/java/com/hdclark/bubbleroulette/MainActivity.kt app/src/main/res/values/themes.xml .ci-trigger
+            git commit -m "Fix Android compatibility checks"
             git push origin HEAD:${{ github.event.pull_request.head.ref }}
           fi
 
