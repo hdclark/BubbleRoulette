@@ -31,8 +31,9 @@ jobs:
           with tarfile.open(fileobj=io.BytesIO(payload), mode='r:gz') as archive:
               archive.extractall('.')
 
-          Path('.github/workflows/bootstrap.yml').unlink(missing_ok=True)
-          Path('.github/workflows/pr-bootstrap.yml').unlink(missing_ok=True)
+          # The Actions token can publish source files but cannot modify workflow files.
+          Path('.github/workflows/android-apk.yml').unlink(missing_ok=True)
+          Path('.bootstrap-trigger').unlink(missing_ok=True)
 
       - name: Commit generated Android project to pull request branch
         shell: bash
